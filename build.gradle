@@ -1,0 +1,118 @@
+buildscript {
+    ext {
+        apacheCommonsLangVersion = "3.2.1"
+        assertjVersion = "3.6.2"
+        awsJavaSdkVersion = "1.11.103"
+        gsonVersion = "2.8.0"
+        springBootVersion = '1.4.0.RELEASE'
+        slf4jVersion = '1.7.+'
+        log4jVersion = '2.6.2'
+        nseAbcLoggingVersion = '1.1.5'
+        dataDogStatsDClientVersion = '2.3'
+        junitVersion = '4.12'
+        dropwizardMetricsVersion="3.2.2"
+        metricsStatsdVersion="3.0.0"
+        javaJwtVersion = '3.2.0'
+        javaJwksRsaVersion = '0.2.0'
+        unirestVersion = '1.4.9'
+    }
+    repositories {
+        maven { url "https://mvnrepo.nordstrom.net/nexus/content/groups/public/" }
+        mavenCentral()
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+        classpath "io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE"
+    }
+}
+
+def jar_name = project.properties['jar_name'] ?: "matchmaker-service"
+def jar_version = project.properties['jar_version'] ?: "0.0-SNAPSHOT"
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'
+
+configure(allprojects) {
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'propdeps-eclipse'
+}
+
+configurations {
+    checkstyleConfig
+}
+
+jar {
+    baseName = jar_name
+    version = jar_version
+    manifest {
+        attributes(
+                'Main-Class': 'com.nordstrom.nse.authoring.service.AuthoringServiceApplication'
+        )
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://mvnrepo.nordstrom.net/nexus/content/groups/public/" }
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "com.amazonaws:aws-java-sdk-bom:${awsJavaSdkVersion}"
+    }
+}
+
+dependencies {
+
+    compile('org.springframework.boot:spring-boot-starter-jersey') {
+        exclude group: 'org.slf4j'
+        exclude group: 'ch.qos.logback'
+    }
+    compile('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'org.slf4j'
+        exclude group: 'ch.qos.logback'
+    }
+    compile('org.springframework.boot:spring-boot-starter-actuator') {
+        exclude group: 'org.slf4j'
+        exclude group: 'ch.qos.logback'
+    }
+    compile("org.slf4j:slf4j-api:${slf4jVersion}",
+            "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
+            "org.apache.logging.log4j:log4j-api:${log4jVersion}",
+            "org.apache.logging.log4j:log4j-core:${log4jVersion}",
+            "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}",
+            "com.datadoghq:java-dogstatsd-client:${dataDogStatsDClientVersion}",
+            "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}",
+            "io.dropwizard.metrics:metrics-jvm:${dropwizardMetricsVersion}",
+            "com.basistech:metrics-statsd:${metricsStatsdVersion}",
+            "com.nordstrom.nse:nordlogger-servlet:${nseAbcLoggingVersion}",
+            "org.apache.commons:commons-lang3:${apacheCommonsLangVersion}",
+            "com.amazonaws:aws-java-sdk-core:${awsJavaSdkVersion}",
+            "com.amazonaws:aws-java-sdk-dynamodb:${awsJavaSdkVersion}",
+            "com.google.code.gson:gson:${gsonVersion}",
+            "com.auth0:java-jwt:${javaJwtVersion}",
+            "com.auth0:jwks-rsa:${javaJwksRsaVersion}",
+            "com.mashape.unirest:unirest-java:${unirestVersion}",
+            "org.mongodb:mongodb-driver:3.4.0-beta1"
+    )
+
+    testCompile(group: 'junit', name: 'junit')
+
+    optional "org.springframework.boot:spring-boot-configuration-processor"
+    testCompile(
+            "org.springframework.boot:spring-boot-starter-test:${springBootVersion}",
+            "org.assertj:assertj-core:${assertjVersion}",
+            "com.google.code.gson:gson:${gsonVersion}"
+    )
+    checkstyleConfig "com.nordstrom.nse:google-java-checkstyle:1.0.2@zip"
+}
+
+compileJava.dependsOn(processResources)

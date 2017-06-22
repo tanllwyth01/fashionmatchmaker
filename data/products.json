@@ -1,0 +1,32 @@
+{
+    productId : "1", 
+    colors: ["midnight", "yellow"],
+    price: 525,
+    brand: "A.L.C",
+    image: http://n.nordstrommedia.com/ImageGallery/store/product/Zoom/9/_100784589.jpg?crop=pad&pad_color=FFF&format=jpeg&w=860&h=1318,
+    poses: ["front", "full-body"]
+}
+
+{
+
+    productId: "2",
+    colors: ["blue"],
+    price: 245,
+    brand: "Le High",
+    image: http://n.nordstrommedia.com/ImageGallery/store/product/Zoom/19/_100573559.jpg?crop=pad&pad_color=FFF&format=jpeg&w=860&h=1318,
+    poses: ["front", "cropped"]
+    
+}
+
+{
+
+    productId: "3",
+    colors: ["ivory"],
+    price: 41,
+    brand: "WAYF",
+    image:http://n.nordstrommedia.com/ImageGallery/store/product/Zoom/4/_12541364.jpg?crop=pad&pad_color=FFF&format=jpeg&w=860&h=1318&dpr=2&quality=
+    poses: ["front", "full-body"]
+
+}
+
+
